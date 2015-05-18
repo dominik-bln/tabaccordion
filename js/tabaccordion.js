@@ -397,41 +397,45 @@ define( ['media-query-sync', 'functions'], function( MediaQuerySync, Functions )
 
             for( var i = accordionGroups.length; i--; ) {
                 try {
-                    currentAccordion = new Accordion(
-                        accordionGroups[i],
-                        accordionGroups[i].querySelectorAll( config.selector.section ),
-                        accordionGroups[i].dataset.panelGroupType,
-                        config
-                    );
-
-                    /* Check if explicitly is defined to leave all elements closed by data attribute `data-panel-group-all-closed` */
-                    if( typeof accordionGroups[i].dataset.panelGroupAllClosed === 'undefined' ) {
-
-                        /* If not explicitly defined, open one accordion element */
-                        var groupOpen = 0;
-
-                        /* Open a specified accordion element if specified by data attribute, e.g. 'data-panel-group-open="2"', else open first element */
-                        if( accordionGroups[i].dataset.panelGroupOpen ) {
-                            groupOpen = parseInt( accordionGroups[i].dataset.panelGroupOpen, 10 );
-
-                            if( groupOpen >= 1 ) {
-                                groupOpen--;
+                    var sections = accordionGroups[i].querySelectorAll( config.selector.section );
+                    
+                    if(sections.length>0){
+                        currentAccordion = new Accordion(
+                            accordionGroups[i],
+                            sections,
+                            accordionGroups[i].dataset.panelGroupType,
+                            config
+                        );
+    
+                        /* Check if explicitly is defined to leave all elements closed by data attribute `data-panel-group-all-closed` */
+                        if( typeof accordionGroups[i].dataset.panelGroupAllClosed === 'undefined' ) {
+    
+                            /* If not explicitly defined, open one accordion element */
+                            var groupOpen = 0;
+    
+                            /* Open a specified accordion element if specified by data attribute, e.g. 'data-panel-group-open="2"', else open first element */
+                            if( accordionGroups[i].dataset.panelGroupOpen ) {
+                                groupOpen = parseInt( accordionGroups[i].dataset.panelGroupOpen, 10 );
+    
+                                if( groupOpen >= 1 ) {
+                                    groupOpen--;
+                                }
+                                else {
+                                    groupOpen = 0;
+                                }
                             }
-                            else {
-                                groupOpen = 0;
-                            }
+    
+                            currentAccordion.open( groupOpen );
                         }
-
-                        currentAccordion.open( groupOpen );
+    
+                        /* Autoplay for this tabaccordion */
+                        if( config.autoPlay.enabled ) {
+                            module.autoPlay( currentAccordion );
+                        }
+    
+                        /* Store a reference to return */
+                        accordions.push( currentAccordion );
                     }
-
-                    /* Autoplay for this tabaccordion */
-                    if( config.autoPlay.enabled ) {
-                        module.autoPlay( currentAccordion );
-                    }
-
-                    /* Store a reference to return */
-                    accordions.push( currentAccordion );
                 }
                 catch( error ) {
                     console.error( error.stack );
